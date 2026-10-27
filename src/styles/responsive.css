@@ -1,0 +1,37 @@
+/* 触屏 / 键盘专属提示，以及窄屏（手机）布局 */
+body.touch .desk, body:not(.touch) .mob { display: none; }
+@media (max-width: 760px) {
+  .menu-lede { display: none; }
+  #menu { place-items: end center; padding-bottom: max(24px, env(safe-area-inset-bottom, 0px)); background: linear-gradient(0deg, rgba(5, 4, 7, 0.94) 0%, rgba(5, 4, 7, 0.72) 55%, transparent 85%); }
+  .menu-box { gap: 12px; }
+  .menu-title { font-size: 72px; --u: 6px; padding-bottom: 18px; }
+  #upgrade h2 { font-size: 36px; --u: 3px; }
+  .cards { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  .card { grid-template-columns: 48px minmax(0, 1fr); column-gap: 12px; row-gap: 0; padding: 4px 4px 8px; }
+  .card .top { grid-row: span 3; flex-direction: column; gap: 4px; align-items: center; }
+  .card::before { display: none; }
+  .card .tag { display: none; }
+  #select h2 { font-size: 36px; --u: 3px; }
+  .heroes { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .hero { padding: 4px 4px 8px; gap: 4px; }
+  .hero::before { display: none; }
+  .hero h3 { font-size: 24px; }
+  .hero p { display: none; }
+  .hero .head svg { width: 36px; height: 36px; }
+  #hud { grid-template-columns: auto 1fr auto; gap: 8px; }
+  .hp svg { width: 18px; height: 16px; }
+  .roll { display: none; }
+  .room-label { gap: 8px; padding: 0 4px; }
+  .room-label .name { font-size: 12px; line-height: 2; }
+  .clock { font-size: 12px; padding-right: 0; }
+  .hud-right { gap: 4px; }
+  .icon-btn { width: 36px; height: 36px; }
+  .icon-btn svg { width: 16px; height: 16px; }
+  #banner .t { font-size: 48px; --u: 4px; }
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dialog h2 { font-size: 36px; --u: 3px; }
+  body.touch #toast { bottom: max(140px, calc(env(safe-area-inset-bottom, 0px) + 130px)); white-space: normal; width: max-content; max-width: calc(100% - 32px); text-align: center; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .screen, .card, #banner.show, .pop, .embers i, .trail { animation-duration: 0.01s; }
+}

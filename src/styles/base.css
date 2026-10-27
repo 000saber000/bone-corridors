@@ -1,0 +1,55 @@
+/* 设计变量、像素字体与页面基础。界面只用 12 的整数倍字号，保证像素字体清晰。单一暗色风格。 */
+@font-face {
+  font-family: "Fusion Pixel";
+  src: url("../assets/fonts/fusion-pixel-12px-proportional-zh_hans.woff2") format("woff2");
+  font-display: block;
+}
+:root {
+  color-scheme: dark;
+  --void: #0b090e;
+  --ink: #fff3d6;
+  --mist: #b9adc8;
+  --dim: #7d7190;
+  --gold: #f2c14e;
+  --gold-hi: #fff2b0;
+  --gold-lo: #b0702a;
+  --ember: #ff7a3d;
+  --blood: #e5484d;
+  --arcane: #b98cff;
+  --frost: #6fd3ff;
+  --moss: #7bd66b;
+  --px: "Fusion Pixel", "Microsoft YaHei", "PingFang SC", monospace;
+  --f-panel: url("../assets/frames/panel.svg");
+  --f-gold: url("../assets/frames/gold.svg");
+  --f-gold-hi: url("../assets/frames/gold-hover.svg");
+  --f-gold-down: url("../assets/frames/gold-down.svg");
+  --f-dark: url("../assets/frames/dark.svg");
+  --f-dark-hi: url("../assets/frames/dark-hover.svg");
+  --f-bar: url("../assets/frames/bar.svg");
+  --f-c-gold: url("../assets/frames/card-gold.svg");
+  --f-c-arcane: url("../assets/frames/card-arcane.svg");
+  --f-c-frost: url("../assets/frames/card-frost.svg");
+  --f-c-moss: url("../assets/frames/card-moss.svg");
+  --f-c-ember: url("../assets/frames/card-ember.svg");
+  --pick-arrow: url("../assets/frames/pick-arrow.svg");
+  --joy-ring: url("../assets/frames/joy-ring.svg");
+  --joy-knob: url("../assets/frames/joy-knob.svg");
+}
+html, body { height: 100%; }
+[hidden] { display: none !important; }
+body {
+  background: var(--void); color: var(--ink);
+  font-family: var(--px); font-size: 12px; line-height: 2;
+  overflow: hidden; position: relative; touch-action: none;
+  -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent;
+  -webkit-font-smoothing: none; font-smooth: never;
+}
+#stage { position: absolute; inset: 0; }
+#stage canvas { display: block; width: 100%; height: 100%; }
+#stage.pixelated canvas { image-rendering: pixelated; }
+.veil { position: absolute; inset: 0; pointer-events: none; }
+#vignette { background: radial-gradient(ellipse at 50% 45%, transparent 50%, rgba(5, 3, 8, 0.82) 100%); }
+#hurt { background: radial-gradient(ellipse at center, transparent 40%, rgba(200, 30, 40, 0.55) 100%); opacity: 0; transition: opacity 0.35s steps(4); }
+#hurt.on { opacity: 1; transition: none; }
+#fade { background: #000; opacity: 0; transition: opacity 0.4s steps(5); z-index: 50; }
+#fade.on { opacity: 1; }
