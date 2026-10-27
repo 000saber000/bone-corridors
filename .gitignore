@@ -1,0 +1,5 @@
+# 原始 .glb 模型只用于转换，网页用的是 models/*.json
+assets/
+# 早期 2D 版本和用不到的引擎
+legacy/
+vendor/phaser.min.js
