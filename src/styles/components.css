@@ -1,0 +1,30 @@
+/* ---------- 像素边框 ---------- */
+.frame { border: 16px solid transparent; border-image: var(--f-panel) 4 fill / 16px / 0 stretch; }
+.frame.sm { border-width: 8px; border-image-width: 8px; }
+.frame.dark { border-image-source: var(--f-dark); }
+.logo {
+  --u: 8px;
+  margin: 0; font-weight: 400; color: var(--gold-hi); line-height: 1.2;
+  text-shadow:
+    0 var(--u) 0 var(--gold-lo), 0 calc(var(--u) * 2) 0 #5a2e12,
+    var(--u) 0 0 #000, calc(var(--u) * -1) 0 0 #000, 0 calc(var(--u) * -1) 0 #000,
+    var(--u) var(--u) 0 #000, calc(var(--u) * -1) var(--u) 0 #000,
+    var(--u) calc(var(--u) * 2) 0 #000, calc(var(--u) * -1) calc(var(--u) * 2) 0 #000,
+    0 calc(var(--u) * 3) 0 #000;
+}
+.eyebrow { margin: 0; font-size: 12px; letter-spacing: 4px; color: var(--ember); text-transform: uppercase; text-shadow: 0 2px 0 #000; }
+.btn {
+  font-family: var(--px); font-size: 24px; line-height: 24px; letter-spacing: 2px; cursor: pointer;
+  min-height: 64px; padding: 2px 18px 6px; color: #2a1606; background: none;
+  border: 16px solid transparent; border-image: var(--f-gold) 4 fill / 16px / 0 stretch;
+  display: inline-flex; align-items: center; justify-content: center; gap: 12px;
+}
+.btn:hover { border-image-source: var(--f-gold-hi); }
+.btn:active { border-image-source: var(--f-gold-down); transform: translateY(4px); }
+.btn-ghost { color: var(--ink); border-image-source: var(--f-dark); text-shadow: 0 2px 0 #000; }
+.btn-ghost:hover { border-image-source: var(--f-dark-hi); }
+.btn-ghost:active { border-image-source: var(--f-dark); }
+.btn .arrow { width: 12px; height: 12px; background: currentColor; clip-path: polygon(0 0, 100% 50%, 0 100%); animation: blink 0.9s steps(2) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+button:focus-visible { outline: 4px solid var(--frost); outline-offset: 4px; }
+.kbd { display: inline-block; padding: 0 6px; margin: 0 2px; background: #2a2033; color: var(--gold-hi); box-shadow: 0 0 0 2px #000, inset 0 -4px 0 #17121c; line-height: 20px; }

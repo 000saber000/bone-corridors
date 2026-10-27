@@ -1,0 +1,16 @@
+/* 调参面板 */
+#tuner {
+  position: absolute; top: 0; right: 0; bottom: 0; width: min(340px, 100%); z-index: 40; overflow-y: auto;
+  -webkit-user-select: text; user-select: text; padding: 4px;
+  display: flex; flex-direction: column; gap: 12px;
+}
+#tuner header { display: flex; justify-content: space-between; align-items: center; }
+#tuner h3 { margin: 0; font-size: 24px; font-weight: 400; color: var(--gold-hi); text-shadow: 2px 2px 0 #000; }
+#tuner .note { margin: 0; color: var(--mist); }
+.tbtn { font-family: var(--px); font-size: 12px; color: var(--ink); cursor: pointer; background: none; padding: 0 8px; border: 8px solid transparent; border-image: var(--f-dark) 4 fill / 8px / 0 stretch; }
+.slider { display: grid; gap: 0; }
+.slider label { display: flex; justify-content: space-between; color: var(--mist); }
+.slider output { color: var(--gold-hi); }
+.slider input { width: 100%; accent-color: var(--gold); }
+#tuner .row { display: flex; gap: 8px; flex-wrap: wrap; }
+#cfgOut { width: 100%; min-height: 140px; font-family: ui-monospace, Consolas, monospace; font-size: 12px; background: #08070a; color: var(--ink); border: 2px solid #000; }
