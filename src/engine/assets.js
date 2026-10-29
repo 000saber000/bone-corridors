@@ -14,6 +14,19 @@ const embedded = k => document.getElementById('asset-' + k);
 // 构建版的场景模型合在 SCENERY_BUNDLE 一个文件里；开发模式和单文件版仍按单个模型加载
 const bundled = !import.meta.env.DEV && !embedded('floor');
 
+// KayKit 的 11 个场景模型各带一份相同的 dungeon_texture，4 个骷髅也各带一份 skeleton_texture。
+// 同名贴图只留第一份、大家共用：显卡少上传十几张 1024×1024 的图（没有独立显卡的电脑上这一步很慢）
+const sharedTex = new Map();
+function shareTextures(mat) {
+  for (const key of Object.keys(mat)) {
+    const t = mat[key];
+    if (!t || !t.isTexture || !t.name) continue;
+    const keep = sharedTex.get(t.name);
+    if (!keep) sharedTex.set(t.name, t);
+    else if (keep !== t) { mat[key] = keep; t.image?.close?.(); }
+  }
+}
+
 function prepare(k, gltf) {
   const isChar = CHAR_KEYS.includes(k);
   gltf.scene.traverse(o => {
@@ -21,6 +34,7 @@ function prepare(k, gltf) {
     o.castShadow = k !== 'floor';
     o.receiveShadow = !isChar;
     if (isChar) o.frustumCulled = false;
+    [].concat(o.material).forEach(shareTextures);
   });
   G[k] = gltf;
 }
