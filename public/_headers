@@ -1,0 +1,8 @@
+# Cloudflare Pages 的缓存规则（Render 不读这个文件，它那边的规则要在 Render 后台设置）
+# assets/ 里的文件名带内容哈希，内容一变文件名就变，可以让浏览器永久缓存
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# 模型文件名不带哈希：缓存 1 天；过期后先用旧的，同时在后台检查更新
+/models/*
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800

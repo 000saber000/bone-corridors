@@ -1,8 +1,18 @@
 import { defineConfig } from 'vite';
+import fontSubset from './scripts/font-subset.mjs';
+
+const FONTS = 'src/assets/fonts';
 
 export default defineConfig({
   // 相对路径：部署到任何子目录都能用
   base: './',
+  plugins: [
+    fontSubset({
+      font: `${FONTS}/fusion-pixel-12px-proportional-zh_hans.woff2`,
+      out: `${FONTS}/fusion-pixel-subset.woff2`,
+      scan: ['index.html', 'src'],
+    }),
+  ],
   build: {
     // 像素边框 SVG 很小，直接内联进 CSS
     assetsInlineLimit: 4096,

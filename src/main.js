@@ -8,8 +8,9 @@ import './styles/responsive.css';
 
 import { S, bolts, shots } from './state.js';
 import { $, isTouch } from './utils.js';
-import { applyPixelate, onResize } from './engine/renderer.js';
-import { loadAll } from './engine/assets.js';
+import { renderer, scene, camera, applyPixelate, onResize } from './engine/renderer.js';
+import { loadAll, enemiesReady, ENEMY_KEYS, G } from './engine/assets.js';
+import { makeChar } from './engine/characters.js';
 import { step, frame } from './game/loop.js';
 import { startRun, nextRoom, toMenu } from './game/flow.js';
 import { tryRoll } from './game/player.js';
@@ -37,10 +38,29 @@ window.dungeon = {
   get state() { return { ...S, bolts, shots }; },
 };
 
+// 第一次画某种模型时，显卡要编译着色器、上传贴图，画面会停顿半秒左右。
+// 趁加载画面还挡着先画一帧标题场景（同一段脚本里完成，玩家看不到这一帧）
+function warmUp() {
+  step(0);
+  renderer.render(scene, camera);
+}
+// 敌人模型后台下完后也预热：每帧只准备一种敌人（编译着色器、上传贴图），分散开标题画面就不会明显卡一下
+function warmEnemies(keys = [...ENEMY_KEYS]) {
+  const k = keys.shift(); if (!k) return;
+  const c = makeChar(G[k]);
+  scene.add(c.root);
+  renderer.compile(scene, camera);
+  c.root.traverse(o => { if (o.isMesh && o.material.map) renderer.initTexture(o.material.map); });
+  scene.remove(c.root);
+  requestAnimationFrame(() => warmEnemies(keys));
+}
+
 loadAll(showProgress).then(() => {
-  $('loading').hidden = true;
   toMenu();
+  warmUp();
+  $('loading').hidden = true;
   requestAnimationFrame(frame);
+  enemiesReady().then(() => warmEnemies(), err => console.error(err));
 }).catch(err => {
   console.error(err);
   $('loadText').textContent = '地牢资源加载失败，请刷新页面重试';
