@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import fontSubset from './scripts/font-subset.mjs';
+import modelBundle from './scripts/model-bundle.mjs';
 
 const FONTS = 'src/assets/fonts';
 
@@ -12,6 +13,7 @@ export default defineConfig({
       out: `${FONTS}/fusion-pixel-subset.woff2`,
       scan: ['index.html', 'src'],
     }),
+    modelBundle(),
   ],
   build: {
     // 像素边框 SVG 很小，直接内联进 CSS
