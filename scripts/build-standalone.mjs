@@ -1,8 +1,9 @@
 // 在 vite build 之后运行：把 dist/ 里的脚本、样式、字体和模型全部内嵌，
 // 生成可以双击打开、也能直接发给别人的单文件版 dist/骸骨回廊.html。
-import { readFileSync, writeFileSync, readdirSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { ASSETS } from '../src/engine/asset-list.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = join(ROOT, 'dist');
@@ -29,14 +30,12 @@ html = html.replace(/<script type="module" crossorigin src="\.\/(assets\/[^"]+\.
 });
 if (/src="\.\/assets\//.test(html) || /href="\.\/assets\/[^"]+\.css"/.test(html)) throw new Error('仍有外部 assets 引用没有内联');
 
-// 3. 模型：按 src/engine/assets.js 里的 ASSETS 清单嵌成 <script id="asset-键名">，游戏会优先读取它们
-const manifest = [...read(join(ROOT, 'src/engine/assets.js')).matchAll(/(\w+): \['(models\/[^']+\.json)'/g)];
-if (manifest.length < 10) throw new Error('没有从 assets.js 读到模型清单');
-const blobs = manifest.map(([, key, file]) =>
+// 3. 模型：按 src/engine/asset-list.js 里的 ASSETS 清单嵌成 <script id="asset-键名">，游戏会优先读取它们
+const manifest = Object.entries(ASSETS).map(([key, [file]]) => [key, file]);
+const blobs = manifest.map(([key, file]) =>
   `<script type="application/json" id="asset-${key}">${read(join(DIST, file)).replace(/<\//g, '<\\/')}</script>`).join('\n');
 html = html.replace('</body>', `${blobs}\n</body>`);
 
 const out = join(DIST, '骸骨回廊.html');
 writeFileSync(out, html);
-const files = readdirSync(join(DIST, 'models')).length;
-console.log(`单文件版已生成：dist/骸骨回廊.html（${(Buffer.byteLength(html) / 1e6).toFixed(1)} MB，内嵌 ${manifest.length}/${files - 1} 个模型）`);
+console.log(`单文件版已生成：dist/骸骨回廊.html（${(Buffer.byteLength(html) / 1e6).toFixed(1)} MB，内嵌 ${manifest.length} 个模型）`);
