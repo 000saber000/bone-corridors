@@ -9,6 +9,8 @@ const DIST = join(ROOT, 'dist');
 const read = p => readFileSync(p, 'utf8');
 
 let html = read(join(DIST, 'index.html'));
+// 字体会内嵌进样式，单文件版不需要预加载外部字体
+html = html.replace(/\s*<link rel="preload"[^>]*>/g, '');
 
 // 1. 样式：<link rel="stylesheet"> 换成内联 <style>，其中引用的字体和图片都换成 base64
 const MIME = { woff2: 'font/woff2', svg: 'image/svg+xml', png: 'image/png' };

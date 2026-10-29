@@ -12,29 +12,43 @@ export const ASSETS = {
   rubble: ['models/rubble_half.json', 51373], chest: ['models/chest.json', 107416],
 };
 const CHAR_KEYS = ['knight', 'mage', 'minion', 'smage', 'warrior', 'rogue'];
-const TOTAL = Object.values(ASSETS).reduce((s, a) => s + a[1], 0);
+// 敌人模型占了一大半体积，但标题画面用不到：先加载英雄和场景，敌人在玩家看标题、选英雄时后台下载
+export const ENEMY_KEYS = ['minion', 'smage', 'warrior', 'rogue'];
+const FIRST_KEYS = Object.keys(ASSETS).filter(k => !ENEMY_KEYS.includes(k));
 
 // 加载完成后的 glTF，按 ASSETS 的键索引
 export const G = {};
 
-export async function loadAll(onProgress) {
-  const loader = new GLTFLoader();
-  const got = {};
-  const report = () => onProgress(Object.keys(ASSETS).reduce((s, k) => s + Math.min(got[k] || 0, ASSETS[k][1]), 0) / TOTAL);
-  await Promise.all(Object.entries(ASSETS).map(([k, [url, size]]) => new Promise((res, rej) => {
-    const done = gltf => { got[k] = size; report(); G[k] = gltf; res(); };
+const loader = new GLTFLoader();
+function loadOne(k, onBytes) {
+  return new Promise((res, rej) => {
+    const done = gltf => {
+      const isChar = CHAR_KEYS.includes(k);
+      gltf.scene.traverse(o => {
+        if (!o.isMesh) return;
+        o.castShadow = k !== 'floor';
+        o.receiveShadow = !isChar;
+        if (isChar) o.frustumCulled = false;
+      });
+      G[k] = gltf; onBytes(ASSETS[k][1]); res();
+    };
     // 单文件版把模型直接嵌在页面里（<script id="asset-…">），双击打开时不需要服务器
     const embedded = document.getElementById('asset-' + k);
     if (embedded) loader.parse(embedded.textContent, '', done, rej);
-    else loader.load(url, done, e => { got[k] = e.loaded; report(); }, rej);
-  })));
-  for (const k of Object.keys(G)) {
-    const isChar = CHAR_KEYS.includes(k);
-    G[k].scene.traverse(o => {
-      if (!o.isMesh) return;
-      o.castShadow = k !== 'floor';
-      o.receiveShadow = !isChar;
-      if (isChar) o.frustumCulled = false;
-    });
-  }
+    else loader.load(ASSETS[k][0], done, e => onBytes(e.loaded), rej);
+  });
+}
+
+let enemiesP = null;
+// 敌人模型加载完成（开始一局前要等它）
+export const enemiesReady = () => enemiesP || Promise.reject(new Error('loadAll 还没调用'));
+export const enemiesLoaded = () => ENEMY_KEYS.every(k => G[k]);
+
+// 先加载标题画面需要的模型，进度条只算这一部分；返回后敌人模型继续在后台下载
+export async function loadAll(onProgress) {
+  const total = FIRST_KEYS.reduce((s, k) => s + ASSETS[k][1], 0);
+  const got = {};
+  const report = () => onProgress(FIRST_KEYS.reduce((s, k) => s + Math.min(got[k] || 0, ASSETS[k][1]), 0) / total);
+  await Promise.all(FIRST_KEYS.map(k => loadOne(k, n => { got[k] = n; report(); })));
+  enemiesP = Promise.all(ENEMY_KEYS.map(k => loadOne(k, () => {})));
 }

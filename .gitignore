@@ -5,3 +5,5 @@ dist/
 /assets/
 # 早期 2D 版本
 /legacy/
+# 构建时自动生成的瘦身字体（scripts/font-subset.mjs）
+/src/assets/fonts/fusion-pixel-subset.woff2

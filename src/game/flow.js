@@ -10,6 +10,7 @@ import { freshMods } from './data/blessings.js';
 import { burst } from './fx.js';
 import { buildRoom, openDoor, place } from './room.js';
 import { newPlayer, disposePlayer, genWaves, alive } from './entities.js';
+import { enemiesLoaded, enemiesReady } from '../engine/assets.js';
 import { updateCamera } from './loop.js';
 import { renderHp, updateFoes, toast } from '../ui/hud.js';
 import { showBlessings } from '../ui/blessings.js';
@@ -49,8 +50,18 @@ function roomPlan() {
   };
 }
 
+let waitingRun = false;
 export function startRun(m = S.selMode, cls = S.selHero) {
   sfx.init();
+  // 敌人模型在后台下载，网速慢时可能还没下完：提示一下，下完自动开始
+  if (!enemiesLoaded()) {
+    if (waitingRun) return;
+    waitingRun = true;
+    toast('骷髅们正在赶来 · 马上开始');
+    enemiesReady().then(() => { waitingRun = false; startRun(m, cls); },
+      () => { waitingRun = false; toast('地牢资源加载失败，请刷新页面重试', 6000); });
+    return;
+  }
   for (const id of ['menu', 'select', 'over', 'pause', 'upgrade']) $(id).hidden = true;
   S.paused = false; S.hitstop = 0; S.slowmo = 0;
   clearCombat();
